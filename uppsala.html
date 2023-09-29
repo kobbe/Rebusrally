@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+      Regex orter uppsala
+    </title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="ol.css" type="text/css">
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="rusticSite.js"></script>
+    <script src="ol.js"></script>
+  </head>
+<body>
+
+<div id="split1">
+    <div id="top">
+        <div>
+            <div style="float:right;"><button onclick="toggle_sites()">Bygd</button></div>
+            <div id="info" style="display: none; float:right;"><button onclick="add_sites()">Bygd</button></div>
+            <div>
+                <details>
+                  <summary>Regex hjälp</summary>
+                    <table>
+                        <tr>
+                            <td>^</td>
+                            <td>start av sträng</td>
+                        </tr>
+                        <tr>
+                            <td>$</td>
+                            <td>slut av sträng</td>
+                        </tr>
+                        <tr>
+                            <td>a*</td>
+                            <td>a 0 eller fler gånger</td>
+                        </tr>
+                        <tr>
+                            <td>a+</td>
+                            <td>a en eller fler gånger</td>
+                        </tr>
+                        <tr>
+                            <td>a?</td>
+                            <td>a 0 eller en gång</td>
+                        </tr>
+                        <tr>
+                            <td>.</td>
+                            <td>en bokstav</td>
+                        </tr>
+                        <tr>
+                            <td>(a|b)</td>
+                            <td>a eller b</td>
+                        </tr>
+                        <tr>
+                            <td>.*</td>
+                            <td>0 eller flera tecken</td>
+                        </tr>
+                    </table>
+                </details>
+            </div>
+            
+        </div>
+        <div>
+        
+        <div style="padding-top: 0.3em">
+        <input type="text" id="search" name="search" placeholder="regex"/>
+        <button onclick="filter()">Sök</button>
+        <span id="hits"> </span>
+        </div>
+        </div>
+    </div>
+
+    <div id="bottom" style="padding-top: 0.3em">
+        <div id="list" class="list"></div>
+    </div>
+
+</div>
+
+<div id="split2">
+   <div id="map" class="map"></div>
+</div>
+
+</body>
+
+
+<script>
+    var NE = [18.17,60.035];
+    var NW = [17.158,60.055];
+    var SW = [17.132,59.697];
+    var SE = [18.13,59.680];
+    
+    var fence_extent = ol.extent.boundingExtent([ol.proj.fromLonLat(NE),ol.proj.fromLonLat(NW),ol.proj.fromLonLat(SW),ol.proj.fromLonLat(SE)]);
+    var filter_extent = ol.extent.buffer(fence_extent, 5000);
+
+    var feature_layer = new ol.layer.Vector({
+    source: new ol.source.Vector()
+    });
+    
+    var fence_layer = new ol.layer.Vector({
+    source: new ol.source.Vector()
+    });
+    
+    var position_layer = new ol.layer.Vector({
+    source: new ol.source.Vector()
+    });
+    
+    var site_layer = new ol.layer.Vector({
+    source: new ol.source.Vector()
+    });
+    
+    var view = new ol.View({
+          center: ol.proj.fromLonLat([17.6483, 59.8569]),
+          zoom: 9
+        });
+
+    var map = new ol.Map({
+        layers: [
+          new ol.layer.Tile({
+            source: new ol.source.OSM(),
+            preload: 5
+          })
+        , feature_layer, fence_layer, position_layer, site_layer],
+        target: 'map',
+        view: view
+    });
+    
+    var node = document.getElementById("search");
+    node.addEventListener("keyup", function(event) {
+        if (event.key === "Enter") {
+            filter();
+        }
+    });
+    
+    const locate = document.createElement('div');
+    locate.className = 'ol-control ol-unselectable locate';
+    locate.innerHTML = '<button title="Locate me">◎</button>';
+    locate.addEventListener('click', function() {
+        var extent = position_layer.getSource().getExtent();
+      if (!ol.extent.isEmpty(extent)) {
+        map.getView().fit(extent, {
+          maxZoom: 11,
+          duration: 500
+        });
+      }
+    });
+    
+    map.addControl(new ol.control.Control({
+      element: locate
+    }));
+    
+    load_settings();
+    add_position();
+    add_fence();
+    
+    var locations = [];
+    var locations_filtered = [];
+    
+    loadLocations();
+    filter();
+    
+    var sites = loadRusticSites();
+    //add_sites();
+    
+    function print(array)
+    {
+        var html = "";
+        
+        if (array.length < 500){
+            array.forEach(function(value){
+                if (value.html != undefined){
+                    html += value.html + "<br>";
+                }
+                else{
+                    html += value.text + "<br>";
+                }
+            })
+        }
+        else{
+            html = "För många träffar";
+        }
+        document.getElementById("list").innerHTML = html;
+    }
+    
+    function save_settings()
+    {
+        var regex_value = document.getElementById('search').value
+        window.history.replaceState('', '', updateURLParameter("search", regex_value));
+    }
+    
+    function load_settings()
+    {
+        document.getElementById('search').value = getURLParameter("search");
+    }
+    
+    function is_in_fence(value)
+    {
+        return ol.extent.containsXY(filter_extent, value.x, value.y);
+    }
+    
+    function filter()
+    {
+        save_settings();
+        var regex_value = document.getElementById('search').value
+
+        var regex = new RegExp(regex_value, "gi");
+        locations_filtered = []
+        
+        if (regex_value == "")
+        {
+            locations_filtered = locations;
+            locations_filtered.forEach(function(value){ // Reset the html formatting.
+                value.html = undefined;
+            })
+        }
+        else{
+            locations.forEach(function(value){
+                if (regex.test(value.text) && is_in_fence(value)){
+                    value.html = value.text.replace(regex, function(str){
+                        return "<b>" + str + "</b>"
+                    })
+                    locations_filtered.push(value)
+                }
+            });
+        }
+        
+        map_clear();
+        if (locations_filtered.length < 500)
+        {
+            var features = [];
+            locations_filtered.forEach(function(value){
+                features.push(create_feature(value));
+            })
+            
+            feature_layer.getSource().addFeatures(features);
+        }
+        document.getElementById("hits").innerText = locations_filtered.length + " träffar"
+        
+        print(locations_filtered)
+    }
+    
+    function style_function(feature, resolution){
+        var style = new ol.style.Style({
+            text : new ol.style.Text({
+                text: feature.get("name"),
+                font: "11px verdana",
+                stroke: new ol.style.Stroke({color: "#dddddd", width: 2}),
+                fill: new ol.style.Fill({
+                    color: "000000"
+                })
+            })
+        });
+        return [style]
+    }
+    
+    function create_feature(value){
+        
+        var feature = new ol.Feature({
+            geometry: new ol.geom.Point([value.x, value.y]),
+            name: value.text,
+            code: value.kod
+        });
+        feature.setStyle(style_function);
+        return feature;
+    }
+    
+    function map_clear(){
+        feature_layer.getSource().clear();
+    }
+    
+    function add_fence()
+    {
+        var cord1 = ol.proj.fromLonLat(NE);
+        var cord2 = ol.proj.fromLonLat(SE);
+        var cord3 = ol.proj.fromLonLat(SW);
+        var cord4 = ol.proj.fromLonLat(NW);
+        
+        var style = [
+           new ol.style.Style({
+             stroke: new ol.style.Stroke({
+               color: [255, 255, 255, 1],
+               width: 5 + 2
+             })
+           }),
+           new ol.style.Style({
+             stroke: new ol.style.Stroke({
+               color: [0, 0, 0, 1],
+               width: 5
+             })
+           })
+        ];
+
+        var feature = new ol.Feature({
+            geometry: new ol.geom.LineString([cord1,cord2,cord3,cord4, cord1])
+        });
+        feature.setStyle(style);
+        fence_layer.getSource().addFeature(feature);
+        
+        // Filter extent
+        
+        /*var feature2 = new ol.Feature({
+            geometry: ol.geom.Polygon.fromExtent(filter_extent)
+        });
+        fence_layer.getSource().addFeature(feature2);*/
+        
+    }
+    
+    function style_function_site(feature, resolution){
+        var style = new ol.style.Style({
+            text : new ol.style.Text({
+                text: feature.get("title") + ":" + feature.get("size"),
+                font: "11px verdana",
+                stroke: new ol.style.Stroke({color: "#dddddd", width: 2}),
+                fill: new ol.style.Fill({
+                    color: "000000"
+                })
+            })
+        });
+        return [style]
+    }
+    
+    function create_site_feature(site){
+        var feature = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.fromLonLat([site.position.lng, site.position.lat])),
+            title: site.title,
+            size: (parseInt(site.max_big)+parseInt(site.max_small))
+        });
+        feature.setStyle(style_function_site);
+        return feature;
+    }
+    
+    function toggle_sites()
+    {
+        if (feature_layer.getSource().getFeatures().length > 0){
+            feature_layer.getSource().clear();
+        }
+        else{
+            var features = [];
+            sites.forEach(function(site){
+                if (site.position){
+                    features.push(create_site_feature(site));
+                }
+            });
+            feature_layer.getSource().addFeatures(features);
+        }
+            
+    }
+    
+    function add_position()
+    {
+        var geolocation = new ol.Geolocation({
+        projection: view.getProjection()
+        });
+        
+        // handle geolocation error.
+        geolocation.on('error', function(error) {
+            var info = document.getElementById('info');
+            info.innerHTML = error.message;
+            info.style.display = '';
+          });
+    
+        var accuracyFeature = new ol.Feature();
+        geolocation.on('change:accuracyGeometry', function() {
+            accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+          });
+
+          var positionFeature = new ol.Feature();
+          positionFeature.setStyle(new ol.style.Style({
+            image: new ol.style.Circle({
+              radius: 6,
+              fill: new ol.style.Fill({
+                color: '#3399CC'
+              }),
+              stroke: new ol.style.Stroke({
+                color: '#fff',
+                width: 2
+              })
+            })
+          }));
+
+          geolocation.on('change:position', function() {
+            var coordinates = geolocation.getPosition();
+            positionFeature.setGeometry(coordinates ?
+              new ol.geom.Point(coordinates) : null);
+          });
+          
+        position_layer.getSource().addFeature(accuracyFeature);
+        position_layer.getSource().addFeature(positionFeature);
+    
+        geolocation.setTracking(true);
+    }
+    
+    function loadRusticSites()
+    {
+        seats.forEach(function(seat) {
+            var indexMatch = null;
+            var detailMatch = null;
+            details.some(function(detail, index) {
+                if (detail.title == seat.title)
+                {
+                    indexMatch = index;
+                    detailMatch = detail;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            });
+            
+            if (indexMatch != null){
+                details.splice(indexMatch, 1);
+                
+                for(var k in detailMatch) {
+                    seat[k]=detailMatch[k];
+                }
+            }
+            else{
+                // Should not happen
+            }
+            
+            
+            var indexMatch = null;
+            var complementMatch = null;
+            complement.some(function(detail, index) {
+                if (detail.title == seat.title)
+                {
+                    indexMatch = index;
+                    complementMatch = detail;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            });
+            
+            if (indexMatch != null){
+                details.splice(indexMatch, 1);
+                
+                if (complementMatch.position)
+                    seat.position = complementMatch.position;
+            }
+            else{
+                // Should not happen
+            }
+        });
+        
+        return seats;
+        /*var missing = []
+        seats.forEach(function(seat){
+            if (seat.position == undefined)
+            {
+                seat.position = {};
+                missing.push(seat);
+            }
+        })
+        console.log(missing.toSource());
+        console.log(JSON.stringify(missing, null, 4));*/
+        
+    }
+    
+    function loadLocations()
+    {
+        var locationsTmp = loadFile("platser.csv");
+        locationsTmp = locationsTmp.split("\n");
+        locationsTmp.shift(); // Delete first row
+        locationsTmp.forEach(function(value, index) {
+            var values = value.split(",");
+            values[values.length - 1] = values[values.length - 1].replace("\r", "");
+            var value = {"x":parseFloat(values[0]), "y":parseFloat(values[1]), "kod":values[2], "text":values[3], "typ": values[4]};
+            if (is_in_fence(value))
+                locations.push(value);
+        });
+        
+        locations.sort(function (a, b) {
+            if (a.text < b.text)
+                return -1;
+            if (a.text > b.text)
+                return 1;
+            return 0;
+        });
+    }
+      
+    function loadFile(filePath) {    
+        var result = null;
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", filePath, false);
+        xmlhttp.send();
+        if (xmlhttp.status==200) {
+            result = xmlhttp.responseText;
+        }
+        return result;
+    }
+    
+    
+function getURLParameter(param)
+{
+    var paramVal = "";
+    var urlSplit = window.location.href.split("?");
+    var parameterURL = urlSplit[1];
+    if (parameterURL) {
+        var parameters = parameterURL.split("&");
+        for (var i=0; i<parameters.length; i++){
+            var parameterSplit = parameters[i].split('=');
+            if(parameterSplit[0] == param){
+                paramVal = parameterSplit[1];
+            }
+        }
+    }
+    return paramVal;
+}
+    
+/**
+ * http://stackoverflow.com/a/10997390/11236
+ */
+function updateURLParameter(param, paramVal){
+    var oldParams = "";
+    var urlSplit = window.location.href.split("?");
+    var baseURL = urlSplit[0];
+    var parameterURL = urlSplit[1];
+    var parameterSeparator = "";
+    if (parameterURL) {
+        var parameters = parameterURL.split("&");
+        for (var i=0; i<parameters.length; i++){
+            if(parameters[i].split('=')[0] != param){
+                oldParams += parameterSeparator + parameters[i];
+                parameterSeparator = "&";
+            }
+        }
+    }
+    var paramToUpdate = "";
+    if (paramVal)  
+        paramToUpdate = parameterSeparator + "" + param + "=" + paramVal;
+    var parameters = oldParams + paramToUpdate;
+    if (parameters)
+        return baseURL + "?" + parameters
+    else return baseURL;
+}
+</script>
+</html>

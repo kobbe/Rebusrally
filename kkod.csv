@@ -1,0 +1,60 @@
+KKOD;KATEGORI
+1;Bebyggelse, enstaka gård, hus
+2;Bebyggelse, by, större gård, mindre stadsdel
+3;Bebyggelse, by, stadsdel
+4;Bebyggelse, samhälle, samlad by
+5;Tätort 200-499 inv., större stadsdel
+6;Tätort 500-1999 inv.
+7;Tätort 2000-9999 inv.
+8;Tätort 10000-49999 inv.
+9;Tätort 50000 och fler inv.
+14;Herrgård, storleksklass 1
+15;Slott
+16;Herrgård, storleksklass 2
+17;Kyrka, storleksklass 1
+18;Kyrka, storleksklass 2
+27;Anläggning, storleksklass 1
+28;Anläggning, storleksklass 2
+42;Adm avgränsat naturområde, storleksklass 1
+43;Adm avgränsat naturområde, storleksklass 2
+44;Adm avgränsat naturområde, storleksklass 3
+45;Adm avgränsat naturområde, storleksklass 4
+49;Adm avgränsat naturområde, storleksklass 8
+51;Naturobjekt, terräng och sankmark, storleksklass 1
+52;Naturobjekt, terräng och sankmark, storleksklass 2
+53;Naturobjekt, terräng och sankmark, storleksklass 3
+54;Naturobjekt, terräng och sankmark, storleksklass 4
+55;Naturobjekt, terräng och sankmark, storleksklass 5
+56;Naturobjekt, terräng och sankmark, storleksklass 6
+57;Naturobjekt, terräng och sankmark, storleksklass 7
+61;Upplysningstext, storleksklass 1
+62;Upplysningstext, storleksklass 2
+63;Upplysningstext, storleksklass 3
+64;Upplysningstext, storleksklass 4
+65;Upplysningstext, storleksklass 5
+71;Fyr, storleksklass 1
+72;Fyr, storleksklass 2
+74;Fornlämning
+75;Bebyggelselämning
+76;Höjdvärde
+79;Vägnummer
+82;Vattendrag, storleksklass 1
+83;Vattendrag, storleksklass 2
+84;Vattendrag, storleksklass 3
+85;Vattendrag, storleksklass 4
+182;Sjö, storleksklass 1
+183;Sjö, storleksklass 2
+184;Sjö, storleksklass 3
+185;Sjö, storleksklass 4
+186;Sjö, storleksklass 5
+187;Sjö, storleksklass 6
+188;Sjö, storleksklass 7
+189;Sjö, storleksklass 8
+192;Del av vatten, storleksklass 1
+193;Del av vatten, storleksklass 2
+194;Del av vatten, storleksklass 3
+195;Del av vatten, storleksklass 4
+196;Del av vatten, storleksklass 5
+197;Del av vatten, storleksklass 6
+198;Del av vatten, storleksklass 7
+199;Del av vatten, storleksklass 8

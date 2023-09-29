@@ -1,0 +1,177 @@
+[
+    {
+        "title": "Bagarstugan Samfällighet",
+        "Kommun": "Uppsala",
+        "max_big": "40",
+        "max_small": "35",
+        "position": {}
+    },
+    {
+        "title": "Bälinge",
+        "Kommun": "Uppsala",
+        "max_big": "140",
+        "max_small": "10",
+        "position": {}
+    },
+    {
+        "title": "Enåker",
+        "Kommun": "Heby",
+        "max_big": "150",
+        "max_small": "15",
+        "position": {}
+    },
+    {
+        "title": "Faringe",
+        "Kommun": "Uppsala",
+        "max_big": "80",
+        "max_small": "40",
+        "position": {}
+    },
+    {
+        "title": "Granhälla",
+        "Kommun": "Östhammar",
+        "max_big": "100",
+        "max_small": "30",
+        "position": {}
+    },
+    {
+        "title": "Hagby",
+        "Kommun": "Uppsala",
+        "max_big": "100",
+        "max_small": "50",
+        "position": {}
+    },
+    {
+        "title": "Hall 2000",
+        "Kommun": "Uppsala",
+        "max_big": "400",
+        "max_small": "25",
+        "position": {}
+    },
+    {
+        "title": "IK Fyris",
+        "Kommun": "Uppsala",
+        "max_big": "300",
+        "max_small": "80",
+        "position": {}
+    },
+    {
+        "title": "Jönninge",
+        "Kommun": "Östhammar",
+        "max_big": "40",
+        "max_small": "20",
+        "position": {}
+    },
+    {
+        "title": "Kelinge",
+        "Kommun": "Östhammar",
+        "max_big": "70",
+        "max_small": "0",
+        "position": {}
+    },
+    {
+        "title": "Kinsta skola",
+        "Kommun": "Uppsala",
+        "max_big": "50",
+        "max_small": "10",
+        "position": {}
+    },
+    {
+        "title": "Knutbygården",
+        "Kommun": "Uppsala",
+        "max_big": "150",
+        "max_small": "20",
+        "position": {}
+    },
+    {
+        "title": "Marma/Mehedeby",
+        "Kommun": "Tierp",
+        "max_big": "85",
+        "max_small": "0",
+        "position": {}
+    },
+    {
+        "title": "Norrskedika",
+        "Kommun": "Östhammar",
+        "max_big": "50",
+        "max_small": "0",
+        "position": {}
+    },
+    {
+        "title": "Norrögården",
+        "Kommun": "Östhammar",
+        "max_big": "100",
+        "max_small": "15",
+        "position": {}
+    },
+    {
+        "title": "PRO Björklinge",
+        "Kommun": "Uppsala",
+        "max_big": "100",
+        "max_small": "30",
+        "position": {}
+    },
+    {
+        "title": "Societetshuset Källör",
+        "Kommun": "Östhammar",
+        "max_big": "",
+        "max_small": "",
+        "position": {}
+    },
+    {
+        "title": "Staffansgården",
+        "Kommun": "Knivsta",
+        "max_big": "60",
+        "max_small": "0",
+        "position": {}
+    },
+    {
+        "title": "Stavby",
+        "Kommun": "Uppsala",
+        "max_big": "100",
+        "max_small": "30",
+        "position": {}
+    },
+    {
+        "title": "Uppsala näs",
+        "Kommun": "Uppsala",
+        "max_big": "60",
+        "max_small": "0",
+        "position": {}
+    },
+    {
+        "title": "Valegården",
+        "Kommun": "Uppsala",
+        "max_big": "30",
+        "max_small": "30",
+        "position": {}
+    },
+    {
+        "title": "Vansjö",
+        "Kommun": "Heby",
+        "max_big": "100",
+        "max_small": "",
+        "position": {}
+    },
+    {
+        "title": "Wattholma",
+        "Kommun": "Uppsala",
+        "max_big": "40",
+        "max_small": "35",
+        "position": {}
+    },
+    {
+        "title": "Åkerby",
+        "Kommun": "Uppsala",
+        "max_big": "70",
+        "max_small": "12",
+        "position": {}
+    },
+    {
+        "title": "Ängsbolaget",
+        "Kommun": "Tierp",
+        "max_big": "80",
+        "max_small": "25",
+        "position": {}
+    }
+]

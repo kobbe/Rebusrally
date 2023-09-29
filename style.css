@@ -1,0 +1,46 @@
+
+#map{
+    height: 100%;
+}
+
+html, body {
+height: 100%;
+margin: 0;
+}
+
+.locate {
+  top: 5em;
+  left: .5em;
+}
+
+@media (orientation: landscape) {
+    #split1{
+        width: calc(50% - 10px); 
+        float: left; 
+        padding: 5px;
+    }
+
+    #split2{
+        width: 50%;
+        float: right;
+        height: 100%;
+    }
+}
+
+@media (orientation: portrait) {
+    #split1{
+        position: fixed;
+        left: 0;
+        right: 0;
+        height: 50%;
+        bottom: 0;
+    }
+
+    #split2{
+        position: fixed;
+        left: 0;
+        right: 0;
+        height: 50%;
+        top: 0;
+    }
+}
